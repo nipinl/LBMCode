@@ -9,4 +9,4 @@
 #ignore output files
 T
 #ignore .vscode folder
-../.vscode
+.vscode/
