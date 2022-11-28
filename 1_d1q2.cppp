@@ -1,0 +1,70 @@
+/*
+5.5.2 Heat Diffusion in an Infinite Slab Subjected
+to a Constant Temperature
+*/
+#include <iostream>
+#include<fstream>
+#include <sys/stat.h>//to check if a file exist
+using namespace std;
+const int m = 100;
+const float one{1.0};
+const float half{0.5};
+inline bool exists(const std::string& name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); //stat rerun 0 if file exists else -1
+}
+int main()
+{
+	float f1[m]{0}, f2[m]{0}, T[m]{0}, feq[m]{0}, x[m]{0};
+	const float dt{1.0}, dx{1.0};
+	for (int i = 0; i < m - 1; i++) {
+		x[i + 1] = x[i] + dx;
+	}
+	float csq{dx*dx / dt*dt};
+	float alpha {0.25};
+	float omega {one / (alpha / (dt*csq) + half)};//Eqn 5.27
+	float oneMinusOmega = 1 - omega;
+	int endTime {200};
+	float Twall {1.0};
+	for (int i = 0; i < m; i++) {
+		f1[i] = 0.5*T[i];
+		f2[i] = 0.5*T[i];
+	}
+	for (size_t time = 1; time <= endTime; time++)
+	{
+		/*collision process*/
+		for (size_t i = 0; i < m; i++)
+		{
+			feq[i] = 0.5*T[i];
+			f1[i] = oneMinusOmega*f1[i] + omega*feq[i];//Eqn 5.21
+			f2[i] = oneMinusOmega*f2[i] + omega*feq[i];
+		}
+		/*streaming process*/
+		for (size_t i = 1; i <= m - 1; i++)
+		{
+			f1[m - i] = f1[m - i - 1];
+			f2[i - 1] = f2[i];
+		}
+		/* Constant temp Twall at left boundary*/
+		f1[0] = Twall - f2[0];
+		/* Adiabatic boundary condition, zero flux condition at right boundary*/
+		f1[m-1] = f1[m - 2];
+		f2[m-1] = f2[m - 2];
+		for (size_t i = 0; i < m; i++)
+		{
+			T[i] = f1[i] + f2[i];
+		}
+	}
+	if (exists("T")){
+		remove("T");
+	}
+	ofstream outFile;
+	outFile.open("T");
+	for (size_t i = 0; i < m; i++)
+	{
+		outFile << x[i] << "\t" << T[i] << endl;
+	}
+	outFile.close();
+	return 0;
+}
+
