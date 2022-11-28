@@ -10,3 +10,5 @@
 T
 #ignore .vscode folder
 .vscode/
+#ignore specific files
+1_d1q2 d1q3 2_d1q2 2_d1q2.cppp
