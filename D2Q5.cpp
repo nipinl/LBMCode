@@ -1,7 +1,14 @@
+/*
+Number of di
+
+
+*/
+
+
 #include "D2Q5.h"
 //constructor with arguments
 D2Q5::D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc)//default Material created if not supplied
-	:nodes(ss.nodes),
+	:Nx(ss.Nx),
 	endTime(ss.endTime),
     k(m.k),
     alpha(m.alpha),
@@ -9,25 +16,25 @@ D2Q5::D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tb
     rbc(rbc),
     tbc(tbc),
     bbc(bbc),
-    T(new double[nodes]),
-	x(new double[nodes]),
-    y(new double[nodes]),
-	f0(new double[nodes]),
-    f1(new double[nodes]),
-    f2(new double[nodes]),
-    f3(new double[nodes]),
-    f4(new double[nodes])
+    T(new double[Nx]),
+	x(new double[Nx]),
+    y(new double[Ny]),
+	f0(new double[Nx]),
+    f1(new double[Nx]),
+    f2(new double[Nx]),
+    f3(new double[Nx]),
+    f4(new double[Nx])
 	{
         omega = 1.0 / (alpha / (dt*cs2) + 0.5);//Eqn 5.27
 		oneMinusOmega = 1.0 - omega;
-        for (int i = 0; i < nodes - 1; i++) {
+        for (int i = 0; i < Nx - 1; i++) {
 		    x[i + 1] = x[i] + dx;
             y[i + 1] = y[i] + dy;
 	    }
 	};
     void D2Q5::collide(){
         double source = uniformHeatSource*alpha/k;
-    for (int i = 0; i < nodes; i++)
+    for (int i = 0; i < Nx; i++)
 		{
 			double feq0 = weights[0]*T[i];
 			double feq  = weights[1]*T[i];
@@ -40,9 +47,9 @@ D2Q5::D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tb
 }
 
 void D2Q5::stream(){
-    for (int i = 1; i <= nodes-1; i++)
+    for (int i = 1; i <= Nx-1; i++)
 		{
-			f1[nodes - i] = f1[nodes - i - 1];//f0 doesn't stream
+			f1[Nx - i] = f1[Nx - i - 1];//f0 doesn't stream
 			f2[i - 1] = f2[i];
         }
 }
@@ -64,26 +71,26 @@ void D2Q5::applyBc(){
         }
     }
     //right boundary
-    if(rbc.type==0){//Dirichlet. T(nodes-1)=TRight
+    if(rbc.type==0){//Dirichlet. T(Nx-1)=TRight
         double TRight = rbc.val1;
-        f2[nodes-1] = TRight - (f0[nodes-1]+f1[nodes-1]);
+        f2[Nx-1] = TRight - (f0[Nx-1]+f1[Nx-1]);
     }
     if(rbc.type==1){
         if(rbc.val1==0){//Adiabatic boundary condition, zero flux condition at right boundary
-            f0[nodes-1]=f0[nodes-2];
-            f1[nodes-1]=f1[nodes-2];
-            f2[nodes-1]=f2[nodes-2];	
+            f0[Nx-1]=f0[Nx-2];
+            f1[Nx-1]=f1[Nx-2];
+            f2[Nx-1]=f2[Nx-2];	
         }
         else{
             double q = rbc.val1;
-             f2[nodes-1] = (f0[nodes-2]+f1[nodes-2]+f2[nodes-2]) + q/k - (f0[nodes-1]+f1[nodes-1]);
+             f2[Nx-1] = (f0[Nx-2]+f1[Nx-2]+f2[Nx-2]) + q/k - (f0[Nx-1]+f1[Nx-1]);
         }
     }
 }
 void D2Q5::calculateT(){
-    for (int i = 0; i < nodes; i++)
+    for (int i = 0; i < Nx; i++)
     {
-        T[i] = f0[i] + f1[i] + f2[i];
+        T[i] = f0[i] + f1[i] + f2[i]+ f3[i] + f4[i];
     }
 }
 void D2Q5::solve(){
@@ -100,7 +107,7 @@ void D2Q5::write(){
     std::ofstream outFile;
     if(exists("T")) remove("T");
 	outFile.open("T");
-	for (int i = 0; i < nodes; i++)
+	for (int i = 0; i < Nx; i++)
 	{
 		outFile << x[i] << "\t" << T[i] << endl;
 	}

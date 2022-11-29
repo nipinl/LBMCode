@@ -6,6 +6,13 @@
 #include<vector>
 #include <sys/stat.h>//to check if a file exist
 using namespace std;
+using double_ptr_1D = std::unique_ptr<double[]>;
+using double_ptr_2D = std::unique_ptr<double_ptr_1D[]>;
+
+double_ptr_2D dPtr( new double_ptr_1D[10] );
+for(size_t i = 0; i < 10; ++i){
+    dPtr[i] = double_ptr_1D( new double[1000] );
+}
 enum bcType {Dirichlet, Neumann, Mixed};
 //Dirichlet: constant value of variablex
 //Neumann: derivative of variable
@@ -22,14 +29,14 @@ class Material{
 		alpha= m.alpha;
 	}
 };
-//solverSetting has N(Number of nodes) and endTime(end time)
+//solverSetting has N(Number of Nx) and endTime(end time)
 class solverSettings{
 	public:
-	int nodes{100}, endTime{200};
+	int Nx{100}, endTime{200};
 	solverSettings(){};
-	solverSettings(int nodes, int endTime):nodes(nodes),endTime(endTime){}
+	solverSettings(int Nx, int endTime):Nx(Nx),endTime(endTime){}
 	solverSettings(const solverSettings& ss){
-		nodes=ss.nodes;
+		Nx=ss.Nx;
 		endTime= ss.endTime;
 	}
 };
@@ -55,14 +62,19 @@ public:
 class D2Q5
 {
 private:
-	const double weights[5]= {2.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};
-	int nodes{100};
+	const double weights[5]= {2.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};//For clarity. w0=2.0/6, w1=1.0/6 is enough
+	int Nx{100},Ny{100};
 	const double length{1}, cs2{1.0/3};
+
+	
 	std::unique_ptr<double[]>T;
 	std::unique_ptr<double[]>x;
+	std::unique_ptr<double[]>y;
 	std::unique_ptr<double[]>f0;
 	std::unique_ptr<double[]>f1;
 	std::unique_ptr<double[]>f2;
+	std::unique_ptr<double[]>f3;
+	std::unique_ptr<double[]>f4;
 	double dt{1.0},dx{1.0},dy{1.0};
 	int endTime{200};
 	bc lbc, rbc, tbc, bbc;
@@ -70,7 +82,7 @@ private:
 	double uniformHeatSource{0.0};
 	double omega{0},oneMinusOmega{1.0};
 public:
-	D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc);
+	D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc);
 	~D2Q5(){};
 	void setUniformHeatSource(double uniformHeatSource){uniformHeatSource=uniformHeatSource;}
 	void calculateT();
