@@ -31,6 +31,7 @@ int main()
 	bc lbc(Neumann,100);
 	bc rbc(Neumann,0);
 	D1Q3 d1q3(m,ss,lbc,rbc);
+	d1q3.setUniformHeatSource(1);
 	d1q3.solve();
 	d1q3.write();
 	

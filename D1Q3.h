@@ -67,12 +67,12 @@ private:
 	int endTime{200};
 	bc lbc, rbc;
 	double k{0.25}, alpha{0.5};
+	double uniformHeatSource{0.0};
 	double omega{0},oneMinusOmega{1.0};
 public:
 	D1Q3(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc);
 	~D1Q3(){};
-	void setLeftBC(bc leftbc){lbc=leftbc;}
-	void setRightBC(bc rightbc){rbc=rightbc;}
+	void setUniformHeatSource(double uniformHeatSource){uniformHeatSource=uniformHeatSource;}
 	void calculateT();
 	void applyBc();
 	void collide();

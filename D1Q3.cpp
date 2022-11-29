@@ -20,13 +20,14 @@ D1Q3::D1Q3(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc)//defau
 	    }
 	};
     void D1Q3::collide(){
+        double source = uniformHeatSource*alpha/k;
     for (int i = 0; i < nodes; i++)
 		{
 			double feq0 = weights[0]*T[i];
 			double feq  = weights[1]*T[i];
-			f0[i] = oneMinusOmega*f0[i] + omega*feq0;
-			f1[i] = oneMinusOmega*f1[i] + omega*feq;//Eqn 5.21
-			f2[i] = oneMinusOmega*f2[i] + omega*feq;
+			f0[i] = oneMinusOmega*f0[i] + omega*feq0 + source*weights[0];
+			f1[i] = oneMinusOmega*f1[i] + omega*feq  + source*weights[1];//Eqn 5.21
+			f2[i] = oneMinusOmega*f2[i] + omega*feq  + source*weights[1];
 		}
 }
 
