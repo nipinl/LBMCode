@@ -7,6 +7,10 @@
 #include <sys/stat.h>//to check if a file exist
 using namespace std;
 enum bcType {Dirichlet, Neumann, Mixed};
+//Dirichlet: constant value of variablex
+//Neumann: derivative of variable
+//Mixed: derivative = a.variable + b
+
 //Material gives thermal conductivity(k) and thermal diffusivity (alpha)
 class Material{
 	public:
@@ -18,6 +22,18 @@ class Material{
 		alpha= m.alpha;
 	}
 };
+//solverSetting has N(Number of nodes) and endTime(end time)
+class solverSettings{
+	public:
+	int nodes{100}, endTime{200};
+	solverSettings(){};
+	solverSettings(int nodes, int endTime):nodes(nodes),endTime(endTime){}
+	solverSettings(const solverSettings& ss){
+		nodes=ss.nodes;
+		endTime= ss.endTime;
+	}
+};
+
 class bc
 {
 public:
@@ -36,28 +52,6 @@ public:
 	}
 	~bc(){};
 };
-class Q3
-{
-double f[3]={0.0};
-public:
-	Q3(){};
-	Q3(double val0,double val1,double val2 ){
-		f[0]=val0;f[1]=val1;f[2]=val2;
-	}
-	Q3(const Q3& other){
-		*this = other;
-	}
-	void setf(double val, int i){f[i]=val;};
-	double operator[](int i){
-		double val{-1};
-		if(i>=0 && i<3) {val= f[i];}
-		return(val);
-	}
-	Q3 & operator=(const Q3& other){
-		f[0]=other.f[0];f[1]=other.f[1];f[2]=other.f[2];
-		return *this;
-	}
-};
 class D1Q3
 {
 private:
@@ -72,10 +66,10 @@ private:
 	double dt{1.0},dx{1.0};
 	int endTime{200};
 	bc lbc, rbc;
-	Material material;
+	double k{0.25}, alpha{0.5};
 	double omega{0},oneMinusOmega{1.0};
 public:
-	D1Q3(int nodes, int endTime);
+	D1Q3(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc);
 	~D1Q3(){};
 	void setLeftBC(bc leftbc){lbc=leftbc;}
 	void setRightBC(bc rightbc){rbc=rightbc;}

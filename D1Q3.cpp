@@ -1,18 +1,19 @@
 #include "D1Q3.h"
 //constructor with arguments
-D1Q3::D1Q3(int nodes, int endTime)//default Material created if not supplied
-	:nodes(nodes),
-	endTime(endTime),
-	//material(m),
-	//x{std::make_unique<double []>(nodes)},
+D1Q3::D1Q3(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc)//default Material created if not supplied
+	:nodes(ss.nodes),
+	endTime(ss.endTime),
+    k(m.k),
+    alpha(m.alpha),
+    lbc(lbc),
+    rbc(rbc),
     T(new double[nodes]),
 	x(new double[nodes]),
 	f0(new double[nodes]),
     f1(new double[nodes]),
     f2(new double[nodes])
 	{
-		Material material(0.25,0.25);
-        omega = 1.0 / (material.alpha / (dt*cs2) + 0.5);//Eqn 5.27
+        omega = 1.0 / (alpha / (dt*cs2) + 0.5);//Eqn 5.27
 		oneMinusOmega = 1.0 - omega;
         for (int i = 0; i < nodes - 1; i++) {
 		    x[i + 1] = x[i] + dx;
@@ -26,7 +27,6 @@ D1Q3::D1Q3(int nodes, int endTime)//default Material created if not supplied
 			f0[i] = oneMinusOmega*f0[i] + omega*feq0;
 			f1[i] = oneMinusOmega*f1[i] + omega*feq;//Eqn 5.21
 			f2[i] = oneMinusOmega*f2[i] + omega*feq;
-            cout<<"oo: ("<<f0[i]<<", "<<f1[i]<<", "<<f2[i]<<") ["<<feq0<<","<<feq<<"]"<<endl;
 		}
 }
 
@@ -51,7 +51,7 @@ void D1Q3::applyBc(){
         }
         else{
             double q = lbc.val1;
-            f1[0] = (f0[1]+f1[1]+f2[1]) + q/material.k - (f0[0]+f2[0]);
+            f1[0] = (f0[1]+f1[1]+f2[1]) + q/k - (f0[0]+f2[0]);
         }
     }
     //right boundary
@@ -67,7 +67,7 @@ void D1Q3::applyBc(){
         }
         else{
             double q = rbc.val1;
-             f2[nodes-1] = (f0[nodes-2]+f1[nodes-2]+f2[nodes-2]) + q/material.k - (f0[nodes-1]+f1[nodes-1]);
+             f2[nodes-1] = (f0[nodes-2]+f1[nodes-2]+f2[nodes-2]) + q/k - (f0[nodes-1]+f1[nodes-1]);
         }
     }
 }
