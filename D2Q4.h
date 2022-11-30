@@ -3,13 +3,11 @@
 #include<memory>
 #include <iostream>
 #include<fstream>
-#include<vector>
 #include <sys/stat.h>//to check if a file exist
 using namespace std;
 using double_ptr_1D = std::unique_ptr<double[]>;
 using double_ptr_2D = std::unique_ptr<double_ptr_1D[]>;
-
-double_ptr_2D dPtr( new double_ptr_1D[10] );
+//using double_ptr_3D = std::unique_ptr<double_ptr_2D[]>;
 
 enum bcType {Dirichlet, Neumann, Mixed};
 //Dirichlet: constant value of variablex
@@ -30,7 +28,7 @@ class Material{
 //solverSetting has N(Number of Nx) and endTime(end time)
 class solverSettings{
 	public:
-	int Nx{100}, endTime{200};
+	int Nx{100}, Ny{100}, endTime{200};
 	solverSettings(){};
 	solverSettings(int Nx, int endTime):Nx(Nx),endTime(endTime){}
 	solverSettings(const solverSettings& ss){
@@ -57,22 +55,23 @@ public:
 	}
 	~bc(){};
 };
-class D2Q5
+class D2Q4
 {
 private:
-	const double weights[5]= {2.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};//For clarity. w0=2.0/6, w1=1.0/6 is enough
+	const double weights[4]= {0.25, 0.25, 0.25, 0.25};//For clarity. All w = 0.25
 	int Nx{100},Ny{100};
 	const double length{1}, cs2{1.0/3};
 
-	
-	std::unique_ptr<double[]>T;
+	double_ptr_2D T;
+	double_ptr_2D f1,f2,f3,f4;
+	//std::unique_ptr<double[]>T;
 	std::unique_ptr<double[]>x;
 	std::unique_ptr<double[]>y;
-	std::unique_ptr<double[]>f0;
+	/* std::unique_ptr<double[]>f0;
 	std::unique_ptr<double[]>f1;
 	std::unique_ptr<double[]>f2;
 	std::unique_ptr<double[]>f3;
-	std::unique_ptr<double[]>f4;
+	std::unique_ptr<double[]>f4; */
 	double dt{1.0},dx{1.0},dy{1.0};
 	int endTime{200};
 	bc lbc, rbc, tbc, bbc;
@@ -80,8 +79,8 @@ private:
 	double uniformHeatSource{0.0};
 	double omega{0},oneMinusOmega{1.0};
 public:
-	D2Q5(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc);
-	~D2Q5(){};
+	D2Q4(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc);
+	~D2Q4(){};
 	void setUniformHeatSource(double uniformHeatSource){uniformHeatSource=uniformHeatSource;}
 	void calculateT();
 	void applyBc();
