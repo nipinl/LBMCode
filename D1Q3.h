@@ -25,12 +25,12 @@ class Material{
 //solverSetting has N(Number of nodes) and endTime(end time)
 class solverSettings{
 	public:
-	int nodes{100}, endTime{200};
+	int endTime{200},nodes{100};
 	solverSettings(){};
-	solverSettings(int nodes, int endTime):nodes(nodes),endTime(endTime){}
+	solverSettings(int endTime, int nodes):endTime(endTime),nodes(nodes){}
 	solverSettings(const solverSettings& ss){
-		nodes=ss.nodes;
 		endTime= ss.endTime;
+		nodes=ss.nodes;
 	}
 };
 

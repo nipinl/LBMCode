@@ -1,5 +1,5 @@
-#ifndef D1Q3_H_
-#define D1Q3_H_
+#ifndef D2Q4_H_
+#define D2Q4_H_
 #include<memory>
 #include <iostream>
 #include<fstream>
@@ -28,12 +28,14 @@ class Material{
 //solverSetting has N(Number of Nx) and endTime(end time)
 class solverSettings{
 	public:
-	int Nx{100}, Ny{100}, endTime{200};
+	int endTime{200}, Nx{100}, Ny{100};
 	solverSettings(){};
-	solverSettings(int Nx, int endTime):Nx(Nx),endTime(endTime){}
+	solverSettings(int endTime,int Nx):Nx(Nx),endTime(endTime){}
+	solverSettings(int endTime,int Nx, int Ny):endTime(endTime),Nx(Nx),Ny(Ny){}
 	solverSettings(const solverSettings& ss){
-		Nx=ss.Nx;
 		endTime= ss.endTime;
+		Nx=ss.Nx;
+		Ny=ss.Ny;
 	}
 };
 
@@ -58,20 +60,14 @@ public:
 class D2Q4
 {
 private:
-	const double weights[4]= {0.25, 0.25, 0.25, 0.25};//For clarity. All w = 0.25
+	const double weights[4]= {0.25, 0.25, 0.25, 0.25};//For clarity. All w = 0.25. 0.25 is used instead of w{i}
 	int Nx{100},Ny{100};
-	const double length{1}, cs2{1.0/3};
+	const double /* length{1.0}, */ cs2{1.0/3};
 
 	double_ptr_2D T;
 	double_ptr_2D f1,f2,f3,f4;
-	//std::unique_ptr<double[]>T;
 	std::unique_ptr<double[]>x;
 	std::unique_ptr<double[]>y;
-	/* std::unique_ptr<double[]>f0;
-	std::unique_ptr<double[]>f1;
-	std::unique_ptr<double[]>f2;
-	std::unique_ptr<double[]>f3;
-	std::unique_ptr<double[]>f4; */
 	double dt{1.0},dx{1.0},dy{1.0};
 	int endTime{200};
 	bc lbc, rbc, tbc, bbc;
@@ -81,6 +77,7 @@ private:
 public:
 	D2Q4(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc);
 	~D2Q4(){};
+	void initialize(double initialTemperature);
 	void setUniformHeatSource(double uniformHeatSource){uniformHeatSource=uniformHeatSource;}
 	void calculateT();
 	void applyBc();
@@ -88,6 +85,7 @@ public:
 	void stream();
 	void solve();
 	void write();
+	void animate();
 	inline bool exists(const std::string& name) {
   struct stat buffer;   
   return (stat (name.c_str(), &buffer) == 0); //stat rerun 0 if file exists else -1

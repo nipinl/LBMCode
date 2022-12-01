@@ -18,6 +18,8 @@ int main(){
     cout<<"Enter number of columns"<<endl;
     cin>>n;
     double_ptr_2D ptr1(new double_ptr_1D[m]);
+    /* double_ptr_2D ptr1;
+    double_ptr_2D ptr1(new double_ptr_1D[m]); */
     for(size_t i=0;i<m;i++){
         ptr1[i] = double_ptr_1D(new double[n]);
     }
