@@ -1,6 +1,6 @@
 #ifndef D2Q5_H_
 #define D2Q5_H_
-
+#include "D1Q3.h"
 #include "D2Q4.h"
 using namespace std;
 

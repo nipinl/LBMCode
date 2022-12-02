@@ -1,10 +1,5 @@
-/*
-Number of di
 
-
-*/
-
-
+#include "D1Q3.h"
 #include "D2Q4.h"
 //constructor with arguments
 D2Q4::D2Q4(const Material& m, const solverSettings& ss, bc& lbc, bc& rbc, bc& tbc, bc& bbc)//default Material created if not supplied
@@ -60,11 +55,11 @@ void D2Q4::collide(){
     for (int j = 0; j < Ny; j++){
         for (int i = 0; i < Nx; i++){
             //cout<<"i = "<<i<<", j = "<<j<<", T[0][0] = "<<T[0][0]<<endl;
-            feq = T[i][j]*0.25;//All weights = 0.25, so using directly to save time
-            f1[i][j] = oneMinusOmega*f1[i][j] + omega*feq  + source*0.25;//Eqn 5.21
-            f2[i][j] = oneMinusOmega*f2[i][j] + omega*feq  + source*0.25;
-            f3[i][j] = oneMinusOmega*f3[i][j] + omega*feq  + source*0.25;
-            f4[i][j] = oneMinusOmega*f4[i][j] + omega*feq  + source*0.25;
+            feq = T[i][j]*w0;//All weights = w0 = 0.25
+            f1[i][j] = oneMinusOmega*f1[i][j] + omega*feq  + source*w0;//Eqn 5.21
+            f2[i][j] = oneMinusOmega*f2[i][j] + omega*feq  + source*w0;
+            f3[i][j] = oneMinusOmega*f3[i][j] + omega*feq  + source*w0;
+            f4[i][j] = oneMinusOmega*f4[i][j] + omega*feq  + source*w0;
         }
     }
 }

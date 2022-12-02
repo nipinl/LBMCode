@@ -1,7 +1,8 @@
 
 #include <iostream>
 #include<memory>
-//#include "D1Q3.h"
+#include "D1Q3.h"
+#include "D2Q4.h"
 #include "D2Q5.h"
 using namespace std;
 

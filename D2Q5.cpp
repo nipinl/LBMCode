@@ -15,11 +15,11 @@ void D2Q5::collide(){
         for (int i = 0; i < Nx; i++){
             feq0 = T[i][j]*w0;
             feq = T[i][j]*w1;
-            f0[i][j] = oneMinusOmega*f1[i][j] + omega*feq0  + source*0.25;
-            f1[i][j] = oneMinusOmega*f1[i][j] + omega*feq  + source*0.25;//Eqn 5.21
-            f2[i][j] = oneMinusOmega*f2[i][j] + omega*feq  + source*0.25;
-            f3[i][j] = oneMinusOmega*f3[i][j] + omega*feq  + source*0.25;
-            f4[i][j] = oneMinusOmega*f4[i][j] + omega*feq  + source*0.25;
+            f0[i][j] = oneMinusOmega*f1[i][j] + omega*feq0  + source*w0;
+            f1[i][j] = oneMinusOmega*f1[i][j] + omega*feq  + source*w1;//Eqn 5.21
+            f2[i][j] = oneMinusOmega*f2[i][j] + omega*feq  + source*w1;
+            f3[i][j] = oneMinusOmega*f3[i][j] + omega*feq  + source*w1;
+            f4[i][j] = oneMinusOmega*f4[i][j] + omega*feq  + source*w1;
         }
     }
 }

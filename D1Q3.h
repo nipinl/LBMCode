@@ -22,15 +22,17 @@ class Material{
 		alpha= m.alpha;
 	}
 };
-//solverSetting has N(Number of nodes) and endTime(end time)
+//solverSetting has Nx(Number of nodes in x direction),Ny(you guessed it) and endTime(end time)
 class solverSettings{
 	public:
-	int endTime{200},nodes{100};
+	int endTime{200}, Nx{100}, Ny{100};
 	solverSettings(){};
-	solverSettings(int endTime, int nodes):endTime(endTime),nodes(nodes){}
+	solverSettings(int endTime,int Nx):endTime(endTime),Nx(Nx){}
+	solverSettings(int endTime,int Nx, int Ny):endTime(endTime),Nx(Nx),Ny(Ny){}
 	solverSettings(const solverSettings& ss){
 		endTime= ss.endTime;
-		nodes=ss.nodes;
+		Nx=ss.Nx;
+		Ny=ss.Ny;
 	}
 };
 
@@ -52,11 +54,12 @@ public:
 	}
 	~bc(){};
 };
+
 class D1Q3
 {
 private:
 	const double weights[3]= {4.0/6, 1.0/6, 1.0/6};
-	int nodes{100};
+	int Nx{100};
 	const double length{1}, cs2{1.0/3};
 	std::unique_ptr<double[]>T;
 	std::unique_ptr<double[]>x;
