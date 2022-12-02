@@ -59,10 +59,10 @@ public:
 };
 class D2Q4
 {
-private:
-	const double weights[4]= {0.25, 0.25, 0.25, 0.25};//For clarity. All w = 0.25. 0.25 is used instead of w{i}
+protected:
+	const double w0{0.25};//For clarity. All w = 0.25. 0.25 is used instead of w{i}
 	int Nx{100},Ny{100};
-	const double /* length{1.0}, */ cs2{1.0/3};
+	const double /* length{1.0}, */ cs2{1.0/2};
 
 	double_ptr_2D T;
 	double_ptr_2D f1,f2,f3,f4;
