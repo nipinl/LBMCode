@@ -4,6 +4,7 @@
 #include "D1Q3.h"
 #include "D2Q4.h"
 #include "D2Q5.h"
+#include "D2Q9.h"
 using namespace std;
 
 int main()
@@ -44,15 +45,19 @@ int main()
 	bc bbc(Dirichlet,1);
 	bc tbc(Dirichlet,1);
 
-	D2Q4 d2q4(m,ss,lbc,rbc,tbc,bbc);
+	/* D2Q4 d2q4(m,ss,lbc,rbc,tbc,bbc);
 	d2q4.initialize(2);
 	d2q4.solve();
-	d2q4.animate();
+	d2q4.animate(); */
 
 	/* D2Q5 d2q5(m,ss,lbc,rbc,tbc,bbc);
 	d2q5.initialize(2);
 	d2q5.solve();
 	d2q5.animate(); */
+	D2Q9 d2q9(m,ss,lbc,rbc,tbc,bbc);
+	d2q9.initialize(2);
+	d2q9.solve();
+	d2q9.animate();
 
 	return 0;
 }

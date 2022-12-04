@@ -6,9 +6,9 @@
 #include <sys/stat.h>//to check if a file exist
 #include "D1Q3.h"
 using namespace std;
-using double_ptr_1D = std::unique_ptr<double[]>;
-using double_ptr_2D = std::unique_ptr<double_ptr_1D[]>;
-//using double_ptr_3D = std::unique_ptr<double_ptr_2D[]>;
+using double_ptr_1D = std::shared_ptr<double[]>;
+using double_ptr_2D = std::shared_ptr<double_ptr_1D[]>;
+//using double_ptr_3D = std::shared_ptr<double_ptr_2D[]>;
 
 class D2Q4
 {
@@ -19,8 +19,8 @@ protected:
 
 	double_ptr_2D T;
 	double_ptr_2D f1,f2,f3,f4;
-	std::unique_ptr<double[]>x;
-	std::unique_ptr<double[]>y;
+	std::shared_ptr<double[]>x;
+	std::shared_ptr<double[]>y;
 	double dt{1.0},dx{1.0},dy{1.0};
 	int endTime{200};
 	bc lbc, rbc, tbc, bbc;
